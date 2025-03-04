@@ -11,18 +11,6 @@ RUN apt-get update && apt-get install -y \
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Définition du dossier de travail
-WORKDIR /var/www
-
-# Copie des fichiers du projet
-COPY backend/ /var/www/
-
-# Installation des dépendances Symfony
-RUN composer install --no-scripts --no-autoloader
-
-# Droits pour Symfony
-RUN chown -R www-data:www-data /var/www/var
-
 # Créer un utilisateur dev
 RUN groupadd ${USER} -g 1000 \
     && useradd ${USER} -g ${USER} -d /home/${USER} -m -ms /bin/bash

@@ -4,8 +4,8 @@ services:
   php:
     container_name: coffreo_api
     build:
-      context: .
-      dockerfile: docker/backend/Dockerfile
+      context: ./docker
+      dockerfile: ./backend/Dockerfile
     volumes:
       - ./backend:/var/www
     working_dir: /var/www
