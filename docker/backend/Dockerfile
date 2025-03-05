@@ -3,19 +3,26 @@ FROM php:8.4-fpm
 
 ARG USER=dev
 
-# Installation des extensions PHP nécessaires
+# Installation des dépendances système et extensions PHP
 RUN apt-get update && apt-get install -y \
     libpq-dev zip unzip git curl libpng-dev libjpeg-dev libfreetype6-dev \
-    && docker-php-ext-install pdo pdo_mysql gd opcache
+    && docker-php-ext-install pdo pdo_mysql gd opcache \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Définition du répertoire de travail
 WORKDIR /var/www
 
-# Installer les dépendances Symfony
-COPY backend /var/www
-RUN composer install
+# Copier uniquement les fichiers nécessaires pour optimiser le cache Docker
+COPY backend/composer.json backend/composer.lock ./
+
+# Installation des dépendances PHP
+RUN composer install --no-dev --prefer-dist --no-progress --no-scripts
+
+# Copier le reste du projet Symfony
+COPY backend/ ./
 
 # Donne les droits d'écriture
 RUN chown -R www-data:www-data /var/www/var
