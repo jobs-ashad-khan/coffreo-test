@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   php:
-    container_name: coffreo_api
+    container_name: coffreo_backend
     build:
       context: .
       dockerfile: ./docker/backend/Dockerfile
@@ -26,14 +26,17 @@ services:
       - php
 
   frontend:
-    container_name: coffreo_app
+    container_name: coffreo_frontend
     build:
       context: .
       dockerfile: ./docker/frontend/Dockerfile
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     ports:
       - "3000:3000"
+    environment:
+      - NODE_ENV=development
     networks:
       - app_network
     depends_on:
