@@ -26,6 +26,21 @@ services:
     depends_on:
       - php
 
+  postgres:
+    image: postgres:latest
+    container_name: coffreo_db
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - app_network
+
   frontend:
     container_name: coffreo_frontend
     build:
@@ -42,6 +57,10 @@ services:
       - app_network
     depends_on:
       - php
+
+volumes:
+  postgres_data:
+    driver: local
 
 networks:
   app_network:
