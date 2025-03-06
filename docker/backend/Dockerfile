@@ -34,5 +34,9 @@ RUN composer install --no-dev --prefer-dist --no-progress --no-scripts
 # Copier le reste du projet Symfony
 COPY backend/ ./
 
+# Repasser en root pour modifier les permissions après la copie
+USER root
+RUN chown -R ${USER}:${USER} /var/www/var /var/www/vendor
+
 # Commande de démarrage
 CMD ["php-fpm"]
