@@ -14,7 +14,7 @@ coffreo_backend:
 	docker exec -u dev -it coffreo_backend bash
 
 coffreo_frontend:
-	docker exec -it coffreo_frontend sh
+	docker exec -u node -it coffreo_frontend sh
 
 coffreo_db:
 	docker exec -it coffreo_db bash
