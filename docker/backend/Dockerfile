@@ -5,8 +5,19 @@ ARG USER=dev
 
 # Installation des dépendances système et extensions PHP
 RUN apt-get update && apt-get install -y \
-    libpq-dev zip unzip git curl libpng-dev libjpeg-dev libfreetype6-dev \
-    && docker-php-ext-install pdo pdo_mysql gd opcache \
+        libpq-dev \
+        libzip-dev \
+        libxslt1-dev \
+        libonig-dev \
+        zip \
+        unzip \
+        git \
+        curl \
+        libpng-dev \
+        libjpeg-dev \
+        libfreetype6-dev \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install pdo pdo_pgsql pgsql zip xsl gd intl opcache exif mbstring \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Créer un utilisateur dev
