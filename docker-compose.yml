@@ -41,6 +41,18 @@ services:
     networks:
       - app_network
 
+  rabbitmq:
+    container_name: coffreo_rabbitmq
+    image: rabbitmq:4.0-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app_network
+
   frontend:
     container_name: coffreo_frontend
     build:

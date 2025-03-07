@@ -16,9 +16,12 @@ RUN apt-get update && apt-get install -y \
         libpng-dev \
         libjpeg-dev \
         libfreetype6-dev \
+        librabbitmq-dev \
+    && pecl install amqp \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo pdo_pgsql pgsql zip xsl gd intl opcache exif mbstring \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-enable amqp
 
 # Créer un utilisateur dev
 RUN groupadd ${USER} -g 1000 \
