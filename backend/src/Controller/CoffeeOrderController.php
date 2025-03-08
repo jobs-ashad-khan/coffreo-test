@@ -2,12 +2,8 @@
 
 namespace App\Controller;
 
-use App\Dto\CreateCoffeeOrderRequestDto;
-use App\Dto\CreateCoffeeOrderResponseDto;
-use App\Entity\Coffee;
-use App\Entity\CoffeeIntensity;
-use App\Entity\CoffeeOrder;
-use App\Entity\CoffeeType;
+use App\DTO\CreateCoffeeOrderRequestDTO;
+use App\Mapper\CoffeeOrder\CreateCoffeeOrderMapper;
 use App\Service\CoffeeOrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class CoffeeOrderController extends AbstractController
 {
     public function __construct(
+        private CreateCoffeeOrderMapper $createCoffeeOrderMapper,
         private CoffeeOrderService $coffeeOrderService,
         private MessageBusInterface $bus
     ) {}
@@ -28,12 +25,15 @@ final class CoffeeOrderController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $requestDto = new CreateCoffeeOrderRequestDto($data['type'], $data['intensity'], $data['size']);
-        $coffeeOrder = $requestDto->toCoffeeOrder();
+        // Création d'un CoffeeOrder depuis le CreateCoffeeOrderRequestDTO
+        $requestDTO = new CreateCoffeeOrderRequestDTO($data['type'], $data['intensity'], $data['size']);
+        $coffeeOrder = $this->createCoffeeOrderMapper->fromCreateCoffeeOrderRequestDTO($requestDTO);
 
+        // Sauvegarde du CoffeeOrder en base de données
         $coffeeOrder = $this->coffeeOrderService->createCoffeeOrder($coffeeOrder);
-        $responseDto = new CreateCoffeeOrderResponseDto($coffeeOrder);
 
-        return $this->json($responseDto->getResponse());
+        // Création du CreateCoffeeOrderResponseDTO depuis le CoffeeOrder et renvoie de la réponse en json
+        $responseDTO = $this->createCoffeeOrderMapper->toCreateCoffeeOrderResponseDTO($coffeeOrder);
+        return $this->json($responseDTO);
     }
 }
