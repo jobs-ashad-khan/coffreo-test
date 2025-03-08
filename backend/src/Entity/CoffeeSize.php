@@ -15,11 +15,11 @@ class CoffeeSize
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', unique: true, enumType: CoffeeSizeEnum::class)]
-    private ?string $size = null;
+    private ?CoffeeSizeEnum $size = null;
 
     public function __construct(string $size)
     {
-        $this->size = $size;
+        $this->size = CoffeeSizeEnum::from($size);
     }
 
     public function getId(): ?int
@@ -27,12 +27,12 @@ class CoffeeSize
         return $this->id;
     }
 
-    public function getSize(): ?string
+    public function getSize(): ?CoffeeSizeEnum
     {
         return $this->size;
     }
 
-    public function setSize(string $size): static
+    public function setSize(CoffeeSizeEnum $size): static
     {
         $this->size = $size;
 
