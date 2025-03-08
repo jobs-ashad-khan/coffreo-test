@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\CoffeeSize as CoffeeSizeEnum;
 use App\Repository\CoffeeSizeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -13,7 +14,7 @@ class CoffeeSize
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', unique: true)]
+    #[ORM\Column(type: 'string', unique: true, enumType: CoffeeSizeEnum::class)]
     private ?string $size = null;
 
     public function __construct(string $size)
