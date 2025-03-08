@@ -16,6 +16,11 @@ class CoffeeSize
     #[ORM\Column(type: 'string', unique: true)]
     private ?string $size = null;
 
+    public function __construct(string $size)
+    {
+        $this->size = $size;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

@@ -16,6 +16,11 @@ class CoffeeIntensity
     #[ORM\Column(type: 'integer', unique: true)]
     private ?int $level = null;
 
+    public function __construct(int $level)
+    {
+        $this->level = $level;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
