@@ -11,7 +11,12 @@ class CoffeeOrderService
         private EntityManagerInterface $entityManager
     ) {}
 
-    public function createCoffeeOrder(CoffeeOrder $coffeeOrder): CoffeeOrder
+    public function getCoffeeOrderById(int $id): CoffeeOrder
+    {
+        return $this->entityManager->getRepository(CoffeeOrder::class)->find($id);
+    }
+
+    public function saveCoffeeOrder(CoffeeOrder $coffeeOrder): CoffeeOrder
     {
         $this->entityManager->persist($coffeeOrder);
         $this->entityManager->flush();
