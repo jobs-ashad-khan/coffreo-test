@@ -14,7 +14,7 @@ class CoffeeOrderMapper
             id: $coffeeOrder->getId(),
             status: $coffeeOrder->getStatus()->value,
             coffee: new CoffeeDTO(
-                name: $coffeeOrder->getCoffee()->getType()->getName(),
+                type: $coffeeOrder->getCoffee()->getType()->getName(),
                 intensity: $coffeeOrder->getCoffee()->getIntensity()->getLevel(),
                 size: $coffeeOrder->getCoffee()->getSize()->getSize()->value
             )

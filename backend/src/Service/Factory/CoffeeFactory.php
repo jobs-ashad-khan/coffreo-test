@@ -19,7 +19,7 @@ readonly class CoffeeFactory
 
     public function createCoffeeFromDTO(CoffeeDTO $coffeeDTO): Coffee
     {
-        $coffeeType = $this->coffeeTypeRepository->findOneBy(['name' => $coffeeDTO->name]);
+        $coffeeType = $this->coffeeTypeRepository->findOneBy(['name' => $coffeeDTO->type]);
         $coffeeIntensity = $this->coffeeIntensityRepository->findOneBy(['level' => $coffeeDTO->intensity]);
         $coffeeSize = $this->coffeeSizeRepository->findOneBy(['size' => $coffeeDTO->size]);
 

@@ -5,7 +5,7 @@ namespace App\DTO;
 class CoffeeDTO
 {
     public function __construct(
-        public string $name,
+        public string $type,
         public int $intensity,
         public string $size
     ) {}
