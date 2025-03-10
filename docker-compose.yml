@@ -8,7 +8,6 @@ services:
       dockerfile: ./docker/backend/Dockerfile
     volumes:
       - ./backend:/var/www
-      - /var/www/vendor
     working_dir: /var/www
     networks:
       - app_network
