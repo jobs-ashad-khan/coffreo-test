@@ -23,6 +23,11 @@ class CoffeeOrderService
         return $coffeeOrder;
     }
 
+    public function getAllCoffeeOrders(): array
+    {
+        return $this->entityManager->getRepository(CoffeeOrder::class)->findBy([], ['createdAt' => 'DESC']);
+    }
+
     public function getCoffeeOrderById(int $id): CoffeeOrder
     {
         return $this->entityManager->getRepository(CoffeeOrder::class)->find($id);

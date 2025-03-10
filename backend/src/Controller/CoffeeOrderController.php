@@ -22,6 +22,15 @@ final class CoffeeOrderController extends AbstractController
         private SerializerInterface $serializer,
     ) {}
 
+    #[Route('', name: 'get_all_coffee_orders', methods: ['GET'])]
+    public function getAll(): JsonResponse
+    {
+        $coffeeOrders = $this->coffeeOrderService->getAllCoffeeOrders();
+
+        $responseArray = CoffeeOrderMapper::toResponseArray($coffeeOrders);
+        return $this->json($responseArray, Response::HTTP_OK);
+    }
+
     #[Route('', name: 'create_coffee_order', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {

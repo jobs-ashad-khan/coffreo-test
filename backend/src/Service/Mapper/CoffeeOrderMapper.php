@@ -5,6 +5,7 @@ namespace App\Service\Mapper;
 use App\DTO\CoffeeDTO;
 use App\DTO\CoffeeOrderDTO;
 use App\Entity\CoffeeOrder;
+use Doctrine\Common\Collections\Collection;
 
 class CoffeeOrderMapper
 {
@@ -19,5 +20,15 @@ class CoffeeOrderMapper
                 size: $coffeeOrder->getCoffee()->getSize()->getSize()->value
             )
         );
+    }
+
+    public static function toResponseArray(array $coffeeOrders): array
+    {
+        $responseArray = [];
+        foreach ($coffeeOrders as $coffeeOrder) {
+            $responseArray[] = self::toResponseDTO($coffeeOrder);
+        }
+
+        return $responseArray;
     }
 }
