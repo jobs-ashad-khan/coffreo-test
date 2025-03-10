@@ -2,10 +2,10 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\CoffeeOrder;
 use App\Enum\CoffeeOrderStatus;
 use App\Message\PrepareCoffeeMessage;
 use App\Service\CoffeeOrderService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -15,21 +15,19 @@ class PrepareCoffeeHandler
         private CoffeeOrderService $coffeeOrderService,
     ) {}
 
-    public function __invoke(PrepareCoffeeMessage $message)
+    public function __invoke(PrepareCoffeeMessage $message): void
     {
         $coffeeOrder = $this->coffeeOrderService->getCoffeeOrderById($message->getCoffeeOrderId());
         if (!$coffeeOrder) {
-
+            throw new NotFoundHttpException("Coffee order not found");
         }
 
         // Étape 1 : "Démarrage" après 5s
         sleep(5);
-        $coffeeOrder->setStatus(CoffeeOrderStatus::IN_PROGRESS);
-        $this->coffeeOrderService->saveCoffeeOrder($coffeeOrder);
+        $this->coffeeOrderService->updateCoffeeOrderStatus($coffeeOrder, CoffeeOrderStatus::IN_PROGRESS);
 
         // Étape 2 : "Prêt" après encore 10s
         sleep(10);
-        $coffeeOrder->setStatus(CoffeeOrderStatus::DONE);
-        $this->coffeeOrderService->saveCoffeeOrder($coffeeOrder);
+        $this->coffeeOrderService->updateCoffeeOrderStatus($coffeeOrder, CoffeeOrderStatus::DONE);
     }
 }

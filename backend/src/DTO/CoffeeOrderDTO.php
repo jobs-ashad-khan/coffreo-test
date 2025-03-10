@@ -2,6 +2,8 @@
 
 namespace App\DTO;
 
+use App\Entity\CoffeeOrder;
+
 class CoffeeOrderDTO
 {
     public function __construct(
