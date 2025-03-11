@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Ratchet\Http\HttpServer;
+use Ratchet\Server\IoServer;
+use Ratchet\WebSocket\WsServer;
+use App\WebSocket\WebSocketServer;
+use Symfony\Component\Dotenv\Dotenv;
+
+// Charger les variables d'environnement
+if (file_exists(__DIR__ . '/../.env')) {
+    (new Dotenv())->load(__DIR__ . '/../.env');
+}
+
+// Initialiser et démarrer le serveur WebSocket
+$server = IoServer::factory(
+    new HttpServer(new WsServer(new WebSocketServer())),
+    8080
+);
+
+echo "Serveur WebSocket démarré sur ws://localhost:8080\n";
+$server->run();
