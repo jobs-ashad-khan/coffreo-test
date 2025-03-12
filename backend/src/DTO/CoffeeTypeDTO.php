@@ -2,12 +2,10 @@
 
 namespace App\DTO;
 
-class CoffeeDTO
+class CoffeeTypeDTO
 {
     public function __construct(
         public string $id,
         public string $type,
-        public int $intensity,
-        public string $size
     ) {}
 }
