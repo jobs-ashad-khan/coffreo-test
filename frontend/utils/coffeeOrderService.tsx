@@ -19,3 +19,16 @@ export const createCoffeeOrder = async (coffee: CoffeeDTO): Promise<CoffeeOrderD
 
     return response.json();
 };
+
+/**
+ * Récupère toutes les commandes de café depuis l'API Symfony.
+ */
+export const getCoffeeOrders = async (): Promise<CoffeeOrderDTO[]> => {
+    const response = await fetch(`${API_URL}/coffee-orders`);
+
+    if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des commandes de café");
+    }
+
+    return response.json();
+};
