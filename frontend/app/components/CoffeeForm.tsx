@@ -1,25 +1,63 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {CoffeeDTO} from "@/types/CoffeeDTO";
 import {createCoffeeOrder} from "@/utils/coffeeOrderService";
 import {CoffeeOrderDTO} from "@/types/CoffeeOrderDTO";
+import {getCoffeeIntensities, getCoffeeSizes, getCoffeeTypes} from "@/utils/coffeeService";
+import {CoffeeTypeDTO} from "@/types/CoffeeTypeDTO";
+import {CoffeeIntensityDTO} from "@/types/CoffeeIntensityDTO";
+import {CoffeeSizeDTO} from "@/types/CoffeeSizeDTO";
+import {coffeeSizeEnumFromString, coffeeSizeLabelsFromEnum} from "@/types/CoffeeSizeEnum";
 
 interface CoffeeFormProps {
     onCoffeeOrder: (coffee: CoffeeOrderDTO) => void;
 }
 
 export default function CoffeeForm({ onCoffeeOrder }: CoffeeFormProps) {
+    const [coffeeTypes, setCoffeeTypes] = useState<CoffeeTypeDTO[]>([]);
+    const [coffeeIntensities, setCoffeeIntensities] = useState<CoffeeIntensityDTO[]>([]);
+    const [coffeeSizes, setCoffeeSizes] = useState<CoffeeSizeDTO[]>([]);
+
     const [coffee, setCoffee] = useState<CoffeeDTO>({
         id: null,
         type: "",
-        intensity: 3,
-        size: "MEDIUM"
+        intensity: -1,
+        size: ""
     });
 
+    // Charger les commandes au montage du composant
+    useEffect(() => {
+        const loadCoffeeOptions = async () => {
+            try {
+                const [fetchedTypes, fetchedIntensities, fetchedSizes] = await Promise.all([
+                    getCoffeeTypes(),
+                    getCoffeeIntensities(),
+                    getCoffeeSizes(),
+                ]);
+
+                setCoffeeTypes(fetchedTypes);
+                setCoffeeIntensities(fetchedIntensities);
+                setCoffeeSizes(fetchedSizes);
+
+                setCoffee({
+                    id: null,
+                    type: fetchedTypes.length > 0 ? fetchedTypes[0].type : "",
+                    intensity: fetchedIntensities.length > 0 ? Number(fetchedIntensities[0].intensity) : -1,
+                    size: fetchedSizes.length > 0 ? fetchedSizes[0].size : "",
+                });
+            } catch (error) {
+                console.error("Erreur lors du chargement des options de café :", error);
+            }
+        };
+
+        loadCoffeeOptions();
+    }, []);
+
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        console.log(e.target.value);
-        setCoffee({ ...coffee, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        console.log(value);
+        setCoffee({ ...coffee, [name]: name === "intensity" ? parseInt(value) : value });
     };
 
     const handleSubmit = async () => {
@@ -39,28 +77,40 @@ export default function CoffeeForm({ onCoffeeOrder }: CoffeeFormProps) {
                 <label className="block">
                     Type :
                     <select name="type" value={coffee.type} onChange={handleChange} className="w-full p-2 border rounded">
-                        <option>Nespresso</option>
-                        <option>Cappuccino</option>
+                        {
+                            (
+                                coffeeTypes.map((coffeeType) => (
+                                    <option key={coffeeType.id} value={coffeeType.type}>{coffeeType.type}</option>
+                                ))
+                            )
+                        }
                     </select>
                 </label>
 
                 <label className="block">
                     Intensité :
                     <select name="intensity" value={coffee.intensity} onChange={handleChange} className="w-full p-2 border rounded">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                        {
+                            (
+                                coffeeIntensities.map((coffeeIntensity) => (
+                                    <option key={coffeeIntensity.id} value={coffeeIntensity.intensity}>{coffeeIntensity.intensity}</option>
+                                ))
+                            )
+                        }
                     </select>
                 </label>
 
                 <label className="block">
                     Taille :
                     <select name="size" value={coffee.size} onChange={handleChange} className="w-full p-2 border rounded">
-                        <option value="SMALL">Petite</option>
-                        <option value="MEDIUM">Moyenne</option>
-                        <option value="LARGE">Grande</option>
+                        {
+                            (
+                                coffeeSizes.map((coffeeSize) => {
+                                    let coffeeSizeEnum = coffeeSizeEnumFromString[coffeeSize.size];
+                                    return <option key={coffeeSize.id} value={coffeeSize.size}>{coffeeSizeLabelsFromEnum[coffeeSizeEnum]}</option>
+                                })
+                            )
+                        }
                     </select>
                 </label>
 

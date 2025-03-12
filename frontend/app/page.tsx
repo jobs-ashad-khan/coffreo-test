@@ -25,8 +25,8 @@ export default function Home() {
 
   const handleNewCoffeeOrder = async (newCoffeeOrder: CoffeeOrderDTO) => {
     setCoffeeOrders((prevOrders) => [
-      ...prevOrders,
       { ...newCoffeeOrder },
+      ...prevOrders,
     ]);
   };
 
