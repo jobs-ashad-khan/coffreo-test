@@ -4,7 +4,18 @@ up: ## Build and start the containers
 down: ## Stop containers
 	docker compose -f ./docker-compose.yml down
 
+restart:
+	docker restart coffreo_rabbitmq
+	docker restart coffreo_mercure
+	docker restart coffreo_backend
+	docker restart coffreo_frontend
+
 install_backend:
+	make backend_dependencies
+	make db_migrations
+	make db_fixtures
+
+backend_dependencies:
 	docker exec -u dev -it coffreo_backend composer install
 
 db_migrations:
@@ -12,6 +23,9 @@ db_migrations:
 
 db_fixtures:
 	docker exec -u dev -it coffreo_backend bin/console doctrine:fixtures:load --no-interaction
+
+rabbitmq-run:
+	docker exec -u dev -it coffreo_backend bin/console messenger:consume async -vv
 
 install_frontend:
 	docker exec -it coffreo_frontend npm install
@@ -24,9 +38,6 @@ coffreo_frontend:
 
 coffreo_db:
 	docker exec -it coffreo_db bash
-
-coffreo_rabbitmq:
-	docker exec -u dev -it coffreo_backend bin/console messenger:consume async -vv
 
 log-nginx:
 	docker logs -f coffreo_nginx
