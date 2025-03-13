@@ -6,8 +6,9 @@ use App\Entity\CoffeeOrder;
 use App\Enum\CoffeeOrderStatus;
 use App\Message\PrepareCoffeeMessage;
 use App\Service\CoffeeOrderService;
-use App\WebSocket\WebSocketServer;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -15,15 +16,20 @@ class PrepareCoffeeHandler
 {
     public function __construct(
         private CoffeeOrderService $coffeeOrderService,
-        private WebSocketServer $webSocketServer,
+        private HubInterface $hub,
     ) {}
 
     private function sendUpdate(CoffeeOrder $coffeeOrder): void
     {
-        $this->webSocketServer->sendUpdate([
-            "id" => $coffeeOrder->getCoffee()->getId(),
-            "status" => $coffeeOrder->getStatus()->value
-        ]);
+        $update = new Update(
+            "coffee-orders/{$coffeeOrder->getId()}",
+            json_encode([
+                'id' => $coffeeOrder->getId(),
+                'status' => $coffeeOrder->getStatus()->value,
+            ])
+        );
+
+        $this->hub->publish($update);
     }
 
     public function __invoke(PrepareCoffeeMessage $message): void
