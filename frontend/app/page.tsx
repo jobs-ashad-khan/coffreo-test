@@ -5,12 +5,7 @@ import {CoffeeOrderDTO} from "@/types/CoffeeOrderDTO";
 import CoffeeForm from "@/app/components/CoffeeForm";
 import {getCoffeeOrders} from "@/utils/coffeeOrderService";
 import CoffeeOrderList from "@/app/components/CoffeeOrderList";
-<<<<<<< Updated upstream
-import webSocketService from "@/utils/webSocketService";
-import {CoffeeMessageDTO} from "@/types/CoffeeMessageDTO";
-=======
 import useMercure from "@/app/hooks/useMercure";
->>>>>>> Stashed changes
 
 export default function Home() {
   const [coffeeOrders, setCoffeeOrders] = useState<CoffeeOrderDTO[]>([]);
@@ -27,24 +22,6 @@ export default function Home() {
     };
 
     loadCoffeeOrders();
-
-    // Connexion WebSocket et écoute des mises à jour
-    webSocketService.connect();
-
-    const handleCoffeeOrderUpdate = (messageDTO: CoffeeMessageDTO) => {
-      setCoffeeOrders((prevOrders) =>
-          prevOrders.map((coffeeOrder) =>
-              coffeeOrder.id === messageDTO.id ? {...coffeeOrder, status: messageDTO.status} : coffeeOrder
-          )
-      );
-    };
-
-    webSocketService.addListener(handleCoffeeOrderUpdate);
-
-    return () => {
-      webSocketService.removeListener(handleCoffeeOrderUpdate);
-    };
-
   }, []);
 
   const handleNewCoffeeOrder = async (newCoffeeOrder: CoffeeOrderDTO) => {
