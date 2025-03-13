@@ -22,12 +22,14 @@ class PrepareCoffeeHandler
     private function sendUpdate(CoffeeOrder $coffeeOrder): void
     {
         $update = new Update(
-            "coffee-orders/{$coffeeOrder->getId()}",
+            "coffee-orders/update",
             json_encode([
                 'id' => $coffeeOrder->getId(),
                 'status' => $coffeeOrder->getStatus()->value,
             ])
         );
+
+        echo "Messsage that will send : " . json_encode($update);
 
         $this->hub->publish($update);
     }
@@ -45,7 +47,7 @@ class PrepareCoffeeHandler
         $this->sendUpdate($coffeeOrder);
 
         // Étape 2 : "Prêt" après encore 10s
-        sleep(10);
+        sleep(5);
         $this->coffeeOrderService->updateCoffeeOrderStatus($coffeeOrder, CoffeeOrderStatus::DONE);
         $this->sendUpdate($coffeeOrder);
     }
